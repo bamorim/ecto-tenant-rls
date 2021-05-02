@@ -10,9 +10,21 @@ defmodule Tenant.CatalogTest do
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil, tenant_id: nil}
 
-    test "list_categories/0 returns all categories" do
-      category = insert(:category)
-      assert Catalog.list_categories() == [category]
+    test "list_categories/0 returns all categories for default tenant" do
+      tenant_categories = insert_list(3, :category, tenant_id: 1)
+      other_categories = insert_list(3, :category, tenant_id: 2)
+      result = Catalog.list_categories()
+      category_ids = result |> Enum.map(& &1.id) |> MapSet.new()
+
+      assert length(result) == 3
+
+      for category <- tenant_categories do
+        assert MapSet.member?(category_ids, category.id)
+      end
+
+      for category <- other_categories do
+        refute MapSet.member?(category_ids, category.id)
+      end
     end
 
     test "get_category!/1 returns the category with given id" do

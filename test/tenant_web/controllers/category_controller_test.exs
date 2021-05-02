@@ -6,9 +6,20 @@ defmodule TenantWeb.CategoryControllerTest do
   @invalid_attrs %{name: nil, tenant_id: nil}
 
   describe "index" do
-    test "lists all categories", %{conn: conn} do
+    test "lists all categories for default tenant", %{conn: conn} do
+      tenant_categories = insert_list(3, :category, tenant_id: 1)
+      other_categories = insert_list(3, :category, tenant_id: 2)
       conn = get(conn, Routes.category_path(conn, :index))
-      assert html_response(conn, 200) =~ "Listing Categories"
+      response = html_response(conn, 200)
+      assert response =~ "Listing Categories"
+
+      for category <- tenant_categories do
+        assert response =~ category.name
+      end
+
+      for category <- other_categories do
+        refute response =~ category.name
+      end
     end
   end
 
@@ -76,7 +87,7 @@ defmodule TenantWeb.CategoryControllerTest do
   end
 
   defp create_category(_) do
-    category = insert(:category)
+    category = insert(:category, tenant_id: 1)
     %{category: category}
   end
 end

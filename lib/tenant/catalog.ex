@@ -18,7 +18,7 @@ defmodule Tenant.Catalog do
 
   """
   def list_categories do
-    Repo.all(Category)
+    Repo.tenant_checkout(1, fn -> Repo.all(Category) end)
   end
 
   @doc """
