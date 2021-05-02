@@ -21,6 +21,22 @@ defmodule TenantWeb.CategoryControllerTest do
         refute response =~ category.name
       end
     end
+
+    test "lists all categories for specified tenant tenant", %{conn: conn} do
+      tenant_categories = insert_list(3, :category, tenant_id: 2)
+      other_categories = insert_list(3, :category, tenant_id: 1)
+      conn = get(conn, Routes.category_path(conn, :index, tenant_id: 2))
+      response = html_response(conn, 200)
+      assert response =~ "Listing Categories"
+
+      for category <- tenant_categories do
+        assert response =~ category.name
+      end
+
+      for category <- other_categories do
+        refute response =~ category.name
+      end
+    end
   end
 
   describe "new category" do

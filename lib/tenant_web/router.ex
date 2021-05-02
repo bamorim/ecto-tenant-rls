@@ -7,6 +7,8 @@ defmodule TenantWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :set_tenant_id
+    plug :load_tenant_id
   end
 
   pipeline :api do
@@ -40,5 +42,29 @@ defmodule TenantWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: TenantWeb.Telemetry
     end
+  end
+
+  def set_tenant_id(conn, _opts) do
+    case conn.params do
+      %{"tenant_id" => tenant_id} ->
+        conn
+        |> Plug.Conn.put_session("tenant_id", tenant_id)
+
+      _ ->
+        if is_nil(Plug.Conn.get_session(conn, "tenant_id")) do
+          conn
+          |> Plug.Conn.put_session("tenant_id", 1)
+        else
+          conn
+        end
+    end
+  end
+
+  def load_tenant_id(conn, _opts) do
+    with %{"tenant_id" => tenant_id} <- Plug.Conn.get_session(conn) do
+      Process.put(:tenant_id, tenant_id)
+    end
+
+    conn
   end
 end

@@ -3,7 +3,9 @@ defmodule Tenant.Repo do
     otp_app: :tenant,
     adapter: Ecto.Adapters.Postgres
 
-  def tenant_checkout(tenant_id, callback) do
+  def tenant_checkout(default_tenant_id, callback) do
+    tenant_id = Process.get(:tenant_id, default_tenant_id)
+
     checkout(fn ->
       query!(
         "SELECT set_config('app.current_tenant_id', $1::text, false);",
