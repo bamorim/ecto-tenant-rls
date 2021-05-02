@@ -73,8 +73,20 @@ defmodule Tenant.CatalogTest do
     @invalid_attrs %{name: nil, tenant_id: nil}
 
     test "list_products/0 returns all products" do
-      product = insert(:product)
-      assert Catalog.list_products() == [product]
+      tenant_products = insert_list(3, :product, tenant_id: 1)
+      other_products = insert_list(3, :product, tenant_id: 2)
+      result = Catalog.list_products()
+      product_ids = result |> Enum.map(& &1.id) |> MapSet.new()
+
+      assert length(result) == 3
+
+      for product <- tenant_products do
+        assert MapSet.member?(product_ids, product.id)
+      end
+
+      for product <- other_products do
+        refute MapSet.member?(product_ids, product.id)
+      end
     end
 
     test "get_product!/1 returns the product with given id" do
