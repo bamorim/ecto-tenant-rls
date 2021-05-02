@@ -1,5 +1,6 @@
 defmodule Tenant.Factory do
-  use ExMachina.Ecto, repo: Tenant.Repo
+  use ExMachina
+  use Tenant.EctoStrategy, repo: Tenant.Repo
 
   alias Tenant.Catalog.Category
   alias Tenant.Catalog.Product

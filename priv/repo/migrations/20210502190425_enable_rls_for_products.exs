@@ -10,7 +10,7 @@ defmodule Tenant.Repo.Migrations.EnableRlsForProducts do
 
     execute """
               CREATE POLICY products_multi_tenancy ON products
-              USING (COALESCE(current_setting('app.current_tenant_id', true)::text, '') = '' OR tenant_id::text = current_setting('app.current_tenant_id', true));
+              USING (current_setting('app.current_tenant_id', true)::text = 'no-tenant' OR tenant_id::text = current_setting('app.current_tenant_id', true));
             """,
             "DROP POLICY products_multi_tenancy ON products;"
   end

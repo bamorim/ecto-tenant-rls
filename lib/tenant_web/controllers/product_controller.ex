@@ -5,7 +5,7 @@ defmodule TenantWeb.ProductController do
   alias Tenant.Catalog.Product
 
   def index(conn, _params) do
-    products = Catalog.list_products() |> Tenant.Repo.preload(:category)
+    products = Catalog.list_products()
     render(conn, "index.html", products: products)
   end
 
@@ -29,7 +29,7 @@ defmodule TenantWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id) |> Tenant.Repo.preload(:category)
+    product = Catalog.get_product!(id)
     render(conn, "show.html", product: product)
   end
 

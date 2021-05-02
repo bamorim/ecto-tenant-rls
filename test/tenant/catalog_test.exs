@@ -90,7 +90,7 @@ defmodule Tenant.CatalogTest do
     end
 
     test "get_product!/1 returns the product with given id" do
-      product = insert(:product)
+      product = insert(:product, category: nil)
       assert Catalog.get_product!(product.id) == product
     end
 
@@ -110,7 +110,7 @@ defmodule Tenant.CatalogTest do
     end
 
     test "update_product/2 with invalid data returns error changeset" do
-      product = insert(:product)
+      product = insert(:product, category: nil)
       assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
       assert product == Catalog.get_product!(product.id)
     end

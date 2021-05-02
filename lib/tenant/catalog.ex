@@ -18,7 +18,7 @@ defmodule Tenant.Catalog do
 
   """
   def list_categories do
-    Repo.tenant_checkout(1, fn -> Repo.all(Category) end)
+    Repo.tenant_checkout(fn -> Repo.all(Category) end)
   end
 
   @doc """
@@ -35,7 +35,7 @@ defmodule Tenant.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category!(id), do: Repo.tenant_checkout(1, fn -> Repo.get!(Category, id) end)
+  def get_category!(id), do: Repo.tenant_checkout(fn -> Repo.get!(Category, id) end)
 
   @doc """
   Creates a category.
@@ -50,7 +50,7 @@ defmodule Tenant.Catalog do
 
   """
   def create_category(attrs \\ %{}) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       %Category{}
       |> Category.changeset(attrs)
       |> Repo.insert()
@@ -70,7 +70,7 @@ defmodule Tenant.Catalog do
 
   """
   def update_category(%Category{} = category, attrs) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       category
       |> Category.changeset(attrs)
       |> Repo.update()
@@ -90,7 +90,7 @@ defmodule Tenant.Catalog do
 
   """
   def delete_category(%Category{} = category) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       Repo.delete(category)
     end)
   end
@@ -120,7 +120,10 @@ defmodule Tenant.Catalog do
 
   """
   def list_products do
-    Repo.tenant_checkout(1, fn -> Repo.all(Product) end)
+    Repo.tenant_checkout(fn ->
+      Repo.all(Product)
+      |> Tenant.Repo.preload(:category)
+    end)
   end
 
   @doc """
@@ -137,7 +140,12 @@ defmodule Tenant.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product!(id), do: Repo.tenant_checkout(1, fn -> Repo.get!(Product, id) end)
+  def get_product!(id) do
+    Repo.tenant_checkout(fn ->
+      Repo.get!(Product, id)
+      |> Tenant.Repo.preload(:category)
+    end)
+  end
 
   @doc """
   Creates a product.
@@ -152,7 +160,7 @@ defmodule Tenant.Catalog do
 
   """
   def create_product(attrs \\ %{}) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       %Product{}
       |> Product.changeset(attrs)
       |> Repo.insert()
@@ -172,7 +180,7 @@ defmodule Tenant.Catalog do
 
   """
   def update_product(%Product{} = product, attrs) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       product
       |> Product.changeset(attrs)
       |> Repo.update()
@@ -192,7 +200,7 @@ defmodule Tenant.Catalog do
 
   """
   def delete_product(%Product{} = product) do
-    Repo.tenant_checkout(1, fn ->
+    Repo.tenant_checkout(fn ->
       Repo.delete(product)
     end)
   end
