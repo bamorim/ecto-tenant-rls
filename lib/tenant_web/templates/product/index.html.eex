@@ -5,6 +5,7 @@
     <tr>
       <th>Name</th>
       <th>Tenant</th>
+      <th>Category</th>
 
       <th></th>
     </tr>
@@ -14,6 +15,7 @@
     <tr>
       <td><%= product.name %></td>
       <td><%= product.tenant_id %></td>
+      <td><%= if product.category, do: product.category.name %></td>
 
       <td>
         <span><%= link "Show", to: Routes.product_path(@conn, :show, product) %></span>

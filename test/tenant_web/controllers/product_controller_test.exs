@@ -18,8 +18,14 @@ defmodule TenantWeb.ProductControllerTest do
 
   describe "index" do
     test "lists all products", %{conn: conn} do
+      category = insert(:category)
+      product = insert(:product, category: category)
+      insert(:product)
       conn = get(conn, Routes.product_path(conn, :index))
-      assert html_response(conn, 200) =~ "Listing Products"
+      response = html_response(conn, 200)
+      assert response =~ "Listing Products"
+      assert response =~ product.name
+      assert response =~ category.name
     end
   end
 
@@ -34,6 +40,18 @@ defmodule TenantWeb.ProductControllerTest do
         conn = get(conn, Routes.product_path(conn, :new))
         html_response(conn, 200)
       end
+    end
+  end
+
+  describe "viewing product" do
+    test "shows category name", %{conn: conn} do
+      category = insert(:category)
+      product = insert(:product, category: category)
+      conn = get(conn, Routes.product_path(conn, :show, product.id))
+      response = html_response(conn, 200)
+      assert response =~ "Show Product"
+      assert response =~ product.name
+      assert response =~ category.name
     end
   end
 

@@ -12,6 +12,13 @@
     <%= @product.tenant_id %>
   </li>
 
+  <%= if @product.category do %>
+    <li>
+      <strong>Category:</strong>
+      <%= @product.category.name %>
+    </li>
+  <% end %>
+
 </ul>
 
 <span><%= link "Edit", to: Routes.product_path(@conn, :edit, @product) %></span>
